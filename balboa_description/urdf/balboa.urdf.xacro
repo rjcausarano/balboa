@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<robot name="balboa" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find balboa_description)/urdf/common_properties.urdf.xacro"/>
+  <xacro:include filename="$(find balboa_description)/urdf/wheel.urdf.xacro"/>
+
+  <!-- Create 3 base definition-->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file://$(find balboa_description)/meshes/body.stl" />
+      </geometry>
+    </visual>
+    <collision name="balboa_collision">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file://$(find balboa_description)/meshes/body.stl" />
+      </geometry>
+    </collision>
+    <xacro:inertial_cuboid mass="1.0" x="0.005" y="0.02" z="0.05"/>
+  </link>
+
+  <!-- Left wheel -->
+  <xacro:wheel name="left_wheel" parent_link="base_link">
+    <origin xyz="0 0.0155 0" rpy="${pi/2} 0 0"/>
+  </xacro:wheel>
+
+  <!-- Right wheel -->
+  <xacro:wheel name="right_wheel" parent_link="base_link">
+    <origin xyz="0 -0.0155 0" rpy="${pi/2} 0 0"/>
+  </xacro:wheel>
+
+</robot>
