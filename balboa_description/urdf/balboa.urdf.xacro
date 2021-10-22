@@ -3,6 +3,22 @@
   <xacro:include filename="$(find balboa_description)/urdf/common_properties.urdf.xacro"/>
   <xacro:include filename="$(find balboa_description)/urdf/wheel.urdf.xacro"/>
 
+  <xacro:property name="body_x" value="${0.5*cm2m}" />
+  <xacro:property name="body_y" value="${2*cm2m}" />
+  <xacro:property name="body_z" value="${5*cm2m}" />
+  <xacro:property name="wheel_radius" value="${1*cm2m}" />
+  <xacro:property name="wheel_width" value="${0.5*cm2m}" />
+  <xacro:property name="distance_between_wheels" value="${2*cm2m}" />
+
+  <link name="origin_link">
+  </link>
+
+  <joint name="origin_joint" type="fixed">
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+    <parent link="origin_link"/>
+    <child link="base_link"/>
+  </joint>
+
   <!-- Create 3 base definition-->
   <link name="base_link">
     <visual>
@@ -17,7 +33,7 @@
         <mesh filename="file://$(find balboa_description)/meshes/body.stl" />
       </geometry>
     </collision>
-    <xacro:inertial_cuboid mass="1.0" x="0.005" y="0.02" z="0.05"/>
+    <xacro:inertial_cuboid mass="1.0" x="${body_x}" y="${body_y}" z="${body_z}"/>
   </link>
 
   <!-- Wheels -->
@@ -27,13 +43,13 @@
   </gazebo>
 
   <!-- Left wheel -->
-  <xacro:wheel name="left" parent_link="base_link">
-    <origin xyz="0 0.0155 0" rpy="${pi/2} 0 0"/>
+  <xacro:wheel name="left" width="${wheel_width}" radius="${wheel_radius}" parent_link="base_link">
+    <origin xyz="0 ${(body_y+wheel_width)/2} 0" rpy="${pi/2} 0 0"/>
   </xacro:wheel>
 
   <!-- Right wheel -->
-  <xacro:wheel name="right" parent_link="base_link">
-    <origin xyz="0 -0.0155 0" rpy="${pi/2} 0 0"/>
+  <xacro:wheel name="right" width="${wheel_width}" radius="${wheel_radius}" parent_link="base_link">
+    <origin xyz="0 ${-(body_y+wheel_width)/2} 0" rpy="${pi/2} 0 0"/>
   </xacro:wheel>
 
 </robot>
