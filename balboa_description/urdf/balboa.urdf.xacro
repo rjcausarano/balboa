@@ -20,13 +20,19 @@
     <xacro:inertial_cuboid mass="1.0" x="0.005" y="0.02" z="0.05"/>
   </link>
 
+  <!-- Wheels -->
+  <gazebo>
+    <plugin name="gazebo_diffdrive" filename="libgazebo_ros_diffdrive_controller.so">
+    </plugin>
+  </gazebo>
+
   <!-- Left wheel -->
-  <xacro:wheel name="left_wheel" parent_link="base_link">
+  <xacro:wheel name="left" parent_link="base_link">
     <origin xyz="0 0.0155 0" rpy="${pi/2} 0 0"/>
   </xacro:wheel>
 
   <!-- Right wheel -->
-  <xacro:wheel name="right_wheel" parent_link="base_link">
+  <xacro:wheel name="right" parent_link="base_link">
     <origin xyz="0 -0.0155 0" rpy="${pi/2} 0 0"/>
   </xacro:wheel>
 
