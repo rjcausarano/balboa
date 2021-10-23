@@ -29,15 +29,27 @@ protected:
   void Load(gazebo::physics::ModelPtr model, sdf::ElementPtr sdf) override;
 
 private:
+  double wheel_radius_{1.0};
+  double wheel_distance_{1.0};
+  int encoder_resolution_{1};
+
+  // Mutex to protect variables written from different threads
+  std::mutex mutex_;
+
+  rclcpp::TimerBase::SharedPtr cmd_vel_timer_;
+
+  double desired_linear_{0.0};
+  double desired_angular_{0.0};
+
   /// Node for ros communication
-  gazebo_ros::Node::SharedPtr ros_node_;
+  gazebo_ros::Node::SharedPtr ros_node_{nullptr};
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr sub_{nullptr};
 
-  gazebo::physics::JointPtr left_wheel_joint_;
-  gazebo::physics::JointPtr right_wheel_joint_;
+  gazebo::physics::JointPtr left_wheel_joint_{nullptr};
+  gazebo::physics::JointPtr right_wheel_joint_{nullptr};
 
+  void ApplyVelsCallback();
   void OnMsgReceived(geometry_msgs::msg::Twist::SharedPtr msg);
-
 };
 
 }  // namespace balboa_gazebo_plugins

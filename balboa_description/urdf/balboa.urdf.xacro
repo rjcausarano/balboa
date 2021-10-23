@@ -7,11 +7,10 @@
   <xacro:property name="body_y" value="${2*cm2m}" />
   <xacro:property name="body_z" value="${5*cm2m}" />
   <xacro:property name="wheel_radius" value="${1*cm2m}" />
-  <xacro:property name="wheel_width" value="${0.5*cm2m}" />
-  <xacro:property name="distance_between_wheels" value="${2*cm2m}" />
+  <xacro:property name="wheel_width" value="${0.1*cm2m}" />
+  <xacro:property name="encoder_resolution" value="1440" />
 
-  <link name="origin_link">
-  </link>
+  <link name="origin_link" />
 
   <joint name="origin_joint" type="fixed">
     <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
@@ -33,12 +32,39 @@
         <mesh filename="file://$(find balboa_description)/meshes/body.stl" />
       </geometry>
     </collision>
-    <xacro:inertial_cuboid mass="1.0" x="${body_x}" y="${body_y}" z="${body_z}"/>
+    <xacro:inertial_cuboid_with_pose mass="1.0" x="${body_x}" y="${body_y}" z="${body_z}">
+      <!-- <origin xyz="${body_x/2} ${body_y/2} ${body_z/2}" /> -->
+      <origin xyz="0 0 0" />
+    </xacro:inertial_cuboid_with_pose>
   </link>
+
+  <!-- IMU -->
+  <gazebo reference="base_link">
+      <gravity>true</gravity>
+      <sensor name="imu_sensor" type="imu">
+        <always_on>true</always_on>
+        <update_rate>100</update_rate>
+        <visualize>true</visualize>
+        <topic>__default_topic__</topic>
+        <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+          <topicName>imu</topicName>
+          <bodyName>base_link</bodyName>
+          <updateRateHZ>10.0</updateRateHZ>
+          <gaussianNoise>0.0</gaussianNoise>
+          <xyzOffset>0 0 0</xyzOffset>
+          <rpyOffset>0 0 0</rpyOffset>
+          <frameName>base_link</frameName>
+        </plugin>
+        <pose>0 0 0 0 0 0</pose>
+      </sensor>
+    </gazebo>
 
   <!-- Wheels -->
   <gazebo>
     <plugin name="gazebo_diffdrive" filename="libgazebo_ros_diffdrive_controller.so">
+      <wheel_radius>${wheel_radius}</wheel_radius>
+      <wheel_distance>${wheel_width + body_y}</wheel_distance>
+      <encoder_resolution>${encoder_resolution}</encoder_resolution>
     </plugin>
   </gazebo>
 
@@ -51,5 +77,21 @@
   <xacro:wheel name="right" width="${wheel_width}" radius="${wheel_radius}" parent_link="base_link">
     <origin xyz="0 ${-(body_y+wheel_width)/2} 0" rpy="${pi/2} 0 0"/>
   </xacro:wheel>
+
+  <!-- Ground truth pose -->
+  <gazebo>
+    <plugin name="gazebo_ros_p3d_robot" filename="libgazebo_ros_p3d.so">
+      <ros>
+        <namespace>/</namespace>
+        <remapping>odom:=sim_ground_truth_pose</remapping>
+      </ros>
+      <body_name>origin_link</body_name>
+      <frame_name>world</frame_name>
+      <update_rate>62</update_rate>
+      <xyz_offset>0 0 0</xyz_offset>
+      <rpy_offset>0.0 0.0 0.0</rpy_offset>
+      <gaussian_noise>0.0</gaussian_noise>
+    </plugin>
+  </gazebo>
 
 </robot>
