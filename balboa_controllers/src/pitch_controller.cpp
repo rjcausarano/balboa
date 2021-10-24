@@ -15,6 +15,10 @@ PitchController::PitchController()
     "imu/data", rclcpp::SystemDefaultsQoS(),
     std::bind(&PitchController::OnImuUpdate, this, std::placeholders::_1));
 
+  pitch_set_point_sub_ = create_subscription<std_msgs::msg::Float64>(
+    "pitch_set_point", rclcpp::SystemDefaultsQoS(),
+    std::bind(&PitchController::OnSetPitch, this, std::placeholders::_1));
+
   const std::chrono::milliseconds timeout{10};  // update rate of 100 Hz
   control_timer_ = create_timer(
     this,
@@ -24,15 +28,29 @@ PitchController::PitchController()
 }
 
 void PitchController::CmdVelCallback(){
-    std::cout << "CmdVelCallback" << std::endl;
+
 }
 
+double PitchController::DoPid(){
+  double error = current_pitch_ - desired_pitch_;
+  error_sum_ += error;
+  double error_diff = error - last_error_;
+  double p_correction = Kp_ * error;
+  double i_correction = Ki_ * error_sum_;
+  double d_correction = Kd_ * error_diff;
+  last_error_ = error;
+  return p_correction + i_correction + d_correction;
+}
 
 void PitchController::OnImuUpdate(sensor_msgs::msg::Imu::SharedPtr msg){
-    std::lock_guard<std::mutex> lock{mutex_};
-    current_pitch_ = std::asin(2 * (msg->orientation.w*msg->orientation.y - msg->orientation.x*msg->orientation.z));
-    std::cout << current_pitch_ * 180 / M_PI << std::endl;
+  std::lock_guard<std::mutex> lock{mutex_};
+  current_pitch_ = std::asin(2 * (msg->orientation.w*msg->orientation.y - msg->orientation.x*msg->orientation.z));
+  current_pitch_ *= 180 / M_PI;
 }
 
+void PitchController::OnSetPitch(std_msgs::msg::Float64::SharedPtr msg){
+  std::lock_guard<std::mutex> lock{mutex_};
+  desired_pitch_ = msg->data;
+}
 
 }  // namespace balboa_controllers
