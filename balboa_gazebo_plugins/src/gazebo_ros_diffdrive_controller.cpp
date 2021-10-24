@@ -44,9 +44,9 @@ void GazeboDiffdriveController::ApplyVelsCallback(){
   double right_linear = desired_linear_ - desired_angular_ * wheel_distance_ / 2;
   double left_linear = desired_linear_ + desired_angular_ * wheel_distance_ / 2;
   right_wheel_joint_->SetParam("vel", 0, right_linear/wheel_radius_);
-  right_wheel_joint_->SetParam("fmax", 0, 100.0);
+  right_wheel_joint_->SetParam("fmax", 0, 1000.0);
   left_wheel_joint_->SetParam("vel", 0, left_linear/wheel_radius_);
-  left_wheel_joint_->SetParam("fmax", 0, 100.0);
+  left_wheel_joint_->SetParam("fmax", 0, 1000.0);
 }
 
 GZ_REGISTER_MODEL_PLUGIN(GazeboDiffdriveController)

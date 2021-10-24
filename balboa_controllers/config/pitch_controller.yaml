@@ -1,0 +1,7 @@
+---
+pitch_controller_node:
+  ros__parameters:
+    Kp: 0.008
+    Kd: 0.0
+    Ki: 0.0
+    max_linear: 5.0

@@ -3,23 +3,29 @@
 from ament_index_python.packages import get_package_share_directory
 from launch.actions import ExecuteProcess
 from launch import LaunchDescription
-from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import Command, PathJoinSubstitution
 from launch_ros.actions import Node
 
 
 def generate_launch_description():
     # Directory
     pkg_balboa_description = get_package_share_directory('balboa_description')
+    pkg_balboa_controllers = get_package_share_directory('balboa_controllers')
+
     # Path
     balboa_xacro_file = PathJoinSubstitution(
         [pkg_balboa_description, 'urdf', 'balboa.urdf.xacro'])
+    pitch_controller_params_yaml_file = PathJoinSubstitution(
+        [pkg_balboa_controllers, 'config', 'pitch_controller.yaml'])
+    empty_world_file_name = PathJoinSubstitution(
+        [pkg_balboa_description, 'worlds', 'empty.world'])
 
     # Gazebo server
     gzserver = ExecuteProcess(
         cmd=['gzserver',
              '-s', 'libgazebo_ros_init.so',
              '-s', 'libgazebo_ros_factory.so',
-             ''],
+             empty_world_file_name],
         output='screen',
     )
 
@@ -45,6 +51,8 @@ def generate_launch_description():
         executable='pitch_controller_node',
         name='pitch_controller_node',
         output='screen',
+        parameters=[pitch_controller_params_yaml_file,
+                    {'use_sim_time': True}],
     )
 
     spawn_model = Node(

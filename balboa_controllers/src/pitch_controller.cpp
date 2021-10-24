@@ -8,6 +8,11 @@ namespace balboa_controllers
 PitchController::PitchController()
 : rclcpp::Node("pitch_controller_node")
 {
+  Kp_ = declare_parameter("Kp").get<double>();
+  Kd_ = declare_parameter("Kd").get<double>();
+  Ki_ = declare_parameter("Ki").get<double>();
+  max_linear_ = declare_parameter("max_linear").get<double>();
+
   cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>(
     "cmd_vel", rclcpp::SystemDefaultsQoS());
 
@@ -28,11 +33,15 @@ PitchController::PitchController()
 }
 
 void PitchController::CmdVelCallback(){
-
+  double pid_correction = DoPid();
+  if(pid_correction > max_linear_) pid_correction = max_linear_;
+  else if(pid_correction < -max_linear_) pid_correction = -max_linear_;
+  cmd_vel_msg_.linear.x = pid_correction;
+  cmd_vel_pub_->publish(cmd_vel_msg_);
 }
 
 double PitchController::DoPid(){
-  double error = current_pitch_ - desired_pitch_;
+  double error = desired_pitch_ - current_pitch_;
   error_sum_ += error;
   double error_diff = error - last_error_;
   double p_correction = Kp_ * error;

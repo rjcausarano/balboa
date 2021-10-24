@@ -20,11 +20,14 @@ private:
   double desired_pitch_{0.0};  // in degrees
   double current_pitch_{0.0}; // in degrees
 
-  const double Kp_{1};
-  const double Kd_{1};
-  const double Ki_{1};
+  double Kp_{0.001};
+  double Kd_{1};
+  double Ki_{1};
+  double max_linear_{0.0};
   double error_sum_{0.0};
   double last_error_{0.0};
+
+  geometry_msgs::msg::Twist cmd_vel_msg_;
 
   rclcpp::TimerBase::SharedPtr control_timer_;
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
