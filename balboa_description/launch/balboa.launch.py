@@ -40,6 +40,13 @@ def generate_launch_description():
         ],
     )
 
+    pitch_controller = Node(
+        package='balboa_controllers',
+        executable='pitch_controller_node',
+        name='pitch_controller_node',
+        output='screen',
+    )
+
     spawn_model = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
@@ -62,5 +69,6 @@ def generate_launch_description():
     ld.add_action(gzclient)
     ld.add_action(state_publisher)
     ld.add_action(spawn_model)
+    ld.add_action(pitch_controller)
 
     return ld

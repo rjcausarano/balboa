@@ -13,45 +13,48 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(gazebo_ros_pkgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 
 #### Libraries
 
 set(dependencies
+  sensor_msgs
   geometry_msgs
   rclcpp
 )
 
-# add_library(diffdrive_controller_lib SHARED)
-# target_sources(
-#   diffdrive_controller_lib
-#   PRIVATE
-#     src/diffdrive_controller.cpp
-# )
-# target_include_directories(diffdrive_controller_lib PUBLIC include)
-# ament_target_dependencies(diffdrive_controller_lib
-#   ${dependencies}
-# )
+add_library(pitch_controller_lib SHARED)
+target_sources(
+  pitch_controller_lib
+  PRIVATE
+    src/pitch_controller.cpp
+)
+target_include_directories(pitch_controller_lib PUBLIC include)
+ament_target_dependencies(pitch_controller_lib
+  ${dependencies}
+)
 
 set(libraries_names
-  # diffdrive_controller_lib
+  pitch_controller_lib
 )
 
 #### Executables
 
-# Diffdrive controller
-# add_executable(diffdrive_controller_node)
-# target_sources(
-#   diffdrive_controller_node
-#   PRIVATE
-#     src/diffdrive_controller_node.cpp
-# )
-# target_link_libraries(diffdrive_controller_node diffdrive_controller_lib)
+# Pitch controller
+add_executable(pitch_controller_node)
+target_sources(
+  pitch_controller_node
+  PRIVATE
+    src/pitch_controller_node.cpp
+)
+target_link_libraries(pitch_controller_node pitch_controller_lib)
 
-# set(executables_names
-#   diffdrive_controller_node
-# )
+set(executables_names
+  pitch_controller_node
+)
 
 #### Install
 
