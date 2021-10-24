@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(balboa_controllers)
+project(balboa_drivers)
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
@@ -23,35 +23,35 @@ set(dependencies
   rclcpp
 )
 
-# add_library(diffdrive_controller_lib SHARED)
-# target_sources(
-#   diffdrive_controller_lib
-#   PRIVATE
-#     src/diffdrive_controller.cpp
-# )
-# target_include_directories(diffdrive_controller_lib PUBLIC include)
-# ament_target_dependencies(diffdrive_controller_lib
-#   ${dependencies}
-# )
+add_library(diffdrive_lib SHARED)
+target_sources(
+  diffdrive_lib
+  PRIVATE
+    src/diffdrive.cpp
+)
+target_include_directories(diffdrive_lib PUBLIC include)
+ament_target_dependencies(diffdrive_lib
+  ${dependencies}
+)
 
 set(libraries_names
-  # diffdrive_controller_lib
+  diffdrive_lib
 )
 
 #### Executables
 
 # Diffdrive controller
-# add_executable(diffdrive_controller_node)
-# target_sources(
-#   diffdrive_controller_node
-#   PRIVATE
-#     src/diffdrive_controller_node.cpp
-# )
-# target_link_libraries(diffdrive_controller_node diffdrive_controller_lib)
+add_executable(diffdrive_node)
+target_sources(
+  diffdrive_node
+  PRIVATE
+    src/diffdrive_node.cpp
+)
+target_link_libraries(diffdrive_node diffdrive_lib)
 
-# set(executables_names
-#   diffdrive_controller_node
-# )
+set(executables_names
+  diffdrive_node
+)
 
 #### Install
 

@@ -4,16 +4,16 @@
 #include "rclcpp/rclcpp.hpp"
 #include <geometry_msgs/msg/twist.hpp>
 
-#ifndef BALBOA_CONTROLLERS__DIFFDRIVE_CONTROLLER_HPP_
-#define BALBOA_CONTROLLERS__DIFFDRIVE_CONTROLLER_HPP_
+#ifndef BALBOA_DRIVERS__DIFFDRIVE_CONTROLLER_HPP_
+#define BALBOA_DRIVERS__DIFFDRIVE_CONTROLLER_HPP_
 
-namespace balboa_controllers
+namespace balboa_drivers
 {
-class DiffdriveController : public rclcpp::Node
+class Diffdrive : public rclcpp::Node
 {
 public:
   /// \brief Constructor
-  DiffdriveController();
+  Diffdrive();
 
 private:
   void OnMsgReceived(geometry_msgs::msg::Twist::SharedPtr msg);
@@ -27,6 +27,6 @@ private:
 
 };
 
-}  // namespace balboa_controllers
+}  // namespace balboa_drivers
 
-#endif  // BALBOA_CONTROLLERS__DIFFDRIVE_CONTROLLER_HPP_
+#endif  // BALBOA_DRIVERS__DIFFDRIVE_CONTROLLER_HPP_

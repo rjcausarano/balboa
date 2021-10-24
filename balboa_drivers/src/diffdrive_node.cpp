@@ -3,12 +3,12 @@
 
 #include <memory>
 
-#include "balboa_controllers/diffdrive_controller.hpp"
+#include "balboa_drivers/diffdrive.hpp"
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<balboa_controllers::DiffdriveController>());
+  rclcpp::spin(std::make_shared<balboa_drivers::Diffdrive>());
   rclcpp::shutdown();
   return 0;
 }

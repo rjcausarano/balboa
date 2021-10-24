@@ -23,7 +23,7 @@ void GazeboDiffdriveController::Load(gazebo::physics::ModelPtr model, sdf::Eleme
     "/cmd_vel", rclcpp::SystemDefaultsQoS(),
     std::bind(&GazeboDiffdriveController::OnMsgReceived, this, std::placeholders::_1));
 
-  const std::chrono::milliseconds timeout{500};
+  const std::chrono::milliseconds timeout{10};  // update rate of 100 Hz
   cmd_vel_timer_ = rclcpp::create_timer(
     ros_node_,
     ros_node_->get_clock(),
