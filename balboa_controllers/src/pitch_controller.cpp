@@ -25,11 +25,10 @@ PitchController::PitchController()
     "pitch_set_point", rclcpp::SystemDefaultsQoS(),
     std::bind(&PitchController::OnSetPitch, this, std::placeholders::_1));
 
-  const std::chrono::milliseconds timeout{(int)(1/cmd_vel_publish_rate)*1000};  // cmd_vel publish rate
   control_timer_ = create_timer(
     this,
     this->get_clock(),
-    timeout,
+    std::chrono::duration<double>(1/cmd_vel_publish_rate),
     std::bind(&PitchController::CmdVelCallback, this));
 }
 
@@ -42,7 +41,7 @@ void PitchController::CmdVelCallback(){
 }
 
 double PitchController::DoPid(){
-  double error = desired_pitch_ - current_pitch_;
+  double error = current_pitch_ - desired_pitch_;
   error_sum_ += error;
   double error_diff = error - last_error_;
   double p_correction = Kp_ * error;

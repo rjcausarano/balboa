@@ -13,9 +13,11 @@ GazeboDiffdriveController::~GazeboDiffdriveController() {}
 
 void GazeboDiffdriveController::Load(gazebo::physics::ModelPtr model, sdf::ElementPtr sdf)
 {
+  double vel_update_rate{0.0};
   utils::initialize(wheel_radius_, sdf, "wheel_radius", 1.0);
   utils::initialize(wheel_distance_, sdf, "wheel_distance", 1.0);
   utils::initialize(encoder_resolution_, sdf, "encoder_resolution", 1);
+  utils::initialize(vel_update_rate, sdf, "vel_update_rate", 1);
 
   ros_node_ = gazebo_ros::Node::Get(sdf);
 
@@ -23,11 +25,10 @@ void GazeboDiffdriveController::Load(gazebo::physics::ModelPtr model, sdf::Eleme
     "/cmd_vel", rclcpp::SystemDefaultsQoS(),
     std::bind(&GazeboDiffdriveController::OnMsgReceived, this, std::placeholders::_1));
 
-  const std::chrono::milliseconds timeout{100};  // update rate of 10 Hz
   cmd_vel_timer_ = rclcpp::create_timer(
     ros_node_,
     ros_node_->get_clock(),
-    timeout,
+    std::chrono::duration<double>(1/vel_update_rate),
     std::bind(&GazeboDiffdriveController::ApplyVelsCallback, this));
 
   left_wheel_joint_ = model->GetJoint("left_wheel_joint");
@@ -43,10 +44,12 @@ void GazeboDiffdriveController::OnMsgReceived(geometry_msgs::msg::Twist::SharedP
 void GazeboDiffdriveController::ApplyVelsCallback(){
   double right_linear = desired_linear_ - desired_angular_ * wheel_distance_ / 2;
   double left_linear = desired_linear_ + desired_angular_ * wheel_distance_ / 2;
+  // std::cout << "right_linear: " << right_linear << std::endl;
   right_wheel_joint_->SetParam("vel", 0, right_linear/wheel_radius_);
   right_wheel_joint_->SetParam("fmax", 0, 1.0);
   left_wheel_joint_->SetParam("vel", 0, left_linear/wheel_radius_);
   left_wheel_joint_->SetParam("fmax", 0, 1.0);
+  // std::cout << "GetParam: "<< right_wheel_joint_->GetParam("vel", 0) << std::endl;
 }
 
 GZ_REGISTER_MODEL_PLUGIN(GazeboDiffdriveController)
