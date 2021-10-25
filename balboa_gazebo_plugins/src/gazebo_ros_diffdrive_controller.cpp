@@ -23,7 +23,7 @@ void GazeboDiffdriveController::Load(gazebo::physics::ModelPtr model, sdf::Eleme
     "/cmd_vel", rclcpp::SystemDefaultsQoS(),
     std::bind(&GazeboDiffdriveController::OnMsgReceived, this, std::placeholders::_1));
 
-  const std::chrono::milliseconds timeout{10};  // update rate of 100 Hz
+  const std::chrono::milliseconds timeout{100};  // update rate of 10 Hz
   cmd_vel_timer_ = rclcpp::create_timer(
     ros_node_,
     ros_node_->get_clock(),
@@ -44,9 +44,9 @@ void GazeboDiffdriveController::ApplyVelsCallback(){
   double right_linear = desired_linear_ - desired_angular_ * wheel_distance_ / 2;
   double left_linear = desired_linear_ + desired_angular_ * wheel_distance_ / 2;
   right_wheel_joint_->SetParam("vel", 0, right_linear/wheel_radius_);
-  right_wheel_joint_->SetParam("fmax", 0, 1000.0);
+  right_wheel_joint_->SetParam("fmax", 0, 1.0);
   left_wheel_joint_->SetParam("vel", 0, left_linear/wheel_radius_);
-  left_wheel_joint_->SetParam("fmax", 0, 1000.0);
+  left_wheel_joint_->SetParam("fmax", 0, 1.0);
 }
 
 GZ_REGISTER_MODEL_PLUGIN(GazeboDiffdriveController)

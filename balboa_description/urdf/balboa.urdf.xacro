@@ -6,8 +6,11 @@
   <xacro:property name="body_x" value="${0.5*cm2m}" />
   <xacro:property name="body_y" value="${3*cm2m}" />
   <xacro:property name="body_z" value="${2*cm2m}" />
+  <xacro:property name="imu_x" value="${0.01*cm2m}" />
+  <xacro:property name="imu_y" value="${0.01*cm2m}" />
+  <xacro:property name="imu_z" value="${0.01*cm2m}" />
   <xacro:property name="wheel_radius" value="${1*cm2m}" />
-  <xacro:property name="wheel_z_offset" value="${0.5*cm2m}" />
+  <xacro:property name="wheel_z_offset" value="${0.0*cm2m}" />
   <xacro:property name="wheel_width" value="${0.1*cm2m}" />
   <xacro:property name="encoder_resolution" value="1440" />
 
@@ -22,7 +25,7 @@
   <!-- Create 3 base definition-->
   <link name="base_link">
     <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 ${25*deg2rad} 0"/>
       <geometry>
         <mesh filename="file://$(find balboa_description)/meshes/body.stl" />
       </geometry>
@@ -34,8 +37,8 @@
       </geometry>
     </collision>
     <xacro:inertial_cuboid_with_pose mass="1.0" x="${body_x}" y="${body_y}" z="${body_z}">
-      <origin xyz="${body_x/2} ${body_y/2} ${body_z/2}" />
-      <!-- <origin xyz="0 0 0" /> -->
+      <!-- <origin xyz="${body_x/2} ${body_y/2} ${body_z/2}" /> -->
+      <origin xyz="0 0 0" />
     </xacro:inertial_cuboid_with_pose>
   </link>
 
@@ -45,7 +48,11 @@
     <child link="imu_link"/>
   </joint>
 
-  <link name="imu_link"/>
+  <link name="imu_link">
+    <xacro:inertial_cuboid_with_pose mass="0.05" x="${imu_x}" y="${imu_y}" z="${imu_z}">
+      <origin xyz="${imu_x/2} ${imu_y/2} ${imu_z/2}" />
+    </xacro:inertial_cuboid_with_pose>
+  </link>
 
   <!-- IMU -->
 <gazebo reference="imu_link">

@@ -12,6 +12,7 @@ PitchController::PitchController()
   Kd_ = declare_parameter("Kd").get<double>();
   Ki_ = declare_parameter("Ki").get<double>();
   max_linear_ = declare_parameter("max_linear").get<double>();
+  double cmd_vel_publish_rate = declare_parameter("publish_rate").get<double>();
 
   cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>(
     "cmd_vel", rclcpp::SystemDefaultsQoS());
@@ -24,7 +25,7 @@ PitchController::PitchController()
     "pitch_set_point", rclcpp::SystemDefaultsQoS(),
     std::bind(&PitchController::OnSetPitch, this, std::placeholders::_1));
 
-  const std::chrono::milliseconds timeout{10};  // update rate of 100 Hz
+  const std::chrono::milliseconds timeout{(int)(1/cmd_vel_publish_rate)*1000};  // cmd_vel publish rate
   control_timer_ = create_timer(
     this,
     this->get_clock(),
