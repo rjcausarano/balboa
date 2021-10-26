@@ -33,10 +33,15 @@ PitchController::PitchController()
 }
 
 void PitchController::CmdVelCallback(){
-  double pid_correction = DoPid();
-  if(pid_correction > max_linear_) pid_correction = max_linear_;
-  else if(pid_correction < -max_linear_) pid_correction = -max_linear_;
-  cmd_vel_msg_.linear.x = pid_correction;
+  std::cout << current_pitch_ << std::endl;
+  if(abs(current_pitch_) > 80){
+    cmd_vel_msg_.linear.x = 0.0;  // If more than 80 degrees, just stop.
+  } else {
+    double pid_correction = DoPid();
+    if(pid_correction > max_linear_) pid_correction = max_linear_;
+    else if(pid_correction < -max_linear_) pid_correction = -max_linear_;
+    cmd_vel_msg_.linear.x = pid_correction;
+  }
   cmd_vel_pub_->publish(cmd_vel_msg_);
 }
 

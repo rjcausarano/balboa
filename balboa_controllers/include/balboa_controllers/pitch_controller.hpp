@@ -19,6 +19,7 @@ public:
 private:
   double desired_pitch_{0.0};  // in degrees
   double current_pitch_{0.0}; // in degrees
+  double current_roll_{0.0};
 
   double Kp_{0.001};
   double Kd_{1};

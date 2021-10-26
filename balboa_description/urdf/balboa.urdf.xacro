@@ -10,6 +10,7 @@
   <xacro:property name="imu_y" value="${0.01*cm2m}" />
   <xacro:property name="imu_z" value="${0.01*cm2m}" />
   <xacro:property name="wheel_radius" value="${1*cm2m}" />
+  <xacro:property name="wheel_mass" value="0.5" />
   <xacro:property name="wheel_z_offset" value="${0.5*cm2m}" />
   <xacro:property name="wheel_width" value="${0.1*cm2m}" />
   <xacro:property name="encoder_resolution" value="1440" />
@@ -49,10 +50,12 @@
     <child link="imu_link"/>
   </joint>
 
+  <gazebo reference="imu_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>
+  </gazebo>
+
   <link name="imu_link">
-    <xacro:inertial_cuboid_with_pose mass="0.05" x="${imu_x}" y="${imu_y}" z="${imu_z}">
-      <origin xyz="${imu_x/2} ${imu_y/2} ${imu_z/2}" />
-    </xacro:inertial_cuboid_with_pose>
+    <xacro:inertial_dummy />
   </link>
 
   <!-- IMU -->
@@ -81,12 +84,12 @@
   </gazebo>
 
   <!-- Left wheel -->
-  <xacro:wheel name="left" width="${wheel_width}" radius="${wheel_radius}" parent_link="base_link">
+  <xacro:wheel name="left" width="${wheel_width}" radius="${wheel_radius}" mass="${wheel_mass}" parent_link="base_link">
     <origin xyz="0 ${(body_y+wheel_width)/2} ${wheel_z_offset}" rpy="${-pi/2} 0 0"/>
   </xacro:wheel>
 
   <!-- Right wheel -->
-  <xacro:wheel name="right" width="${wheel_width}" radius="${wheel_radius}" parent_link="base_link">
+  <xacro:wheel name="right" width="${wheel_width}" radius="${wheel_radius}" mass="${wheel_mass}" parent_link="base_link">
     <origin xyz="0 ${-(body_y+wheel_width)/2} ${wheel_z_offset}" rpy="${-pi/2} 0 0"/>
   </xacro:wheel>
 
