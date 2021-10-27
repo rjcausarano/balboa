@@ -1,8 +1,8 @@
 ---
 pitch_controller_node:
   ros__parameters:
-    Kp: 0.03
+    Kp: 0.04
     Kd: 0.0
-    Ki: 0.005
+    Ki: 0.0
     publish_rate: 100.0
     max_linear: 5.0

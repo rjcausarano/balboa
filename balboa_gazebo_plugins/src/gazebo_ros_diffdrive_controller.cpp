@@ -44,12 +44,10 @@ void GazeboDiffdriveController::OnMsgReceived(geometry_msgs::msg::Twist::SharedP
 void GazeboDiffdriveController::ApplyVelsCallback(){
   double right_linear = desired_linear_ - desired_angular_ * wheel_distance_ / 2;
   double left_linear = desired_linear_ + desired_angular_ * wheel_distance_ / 2;
-  // std::cout << "right_linear: " << right_linear << std::endl;
   right_wheel_joint_->SetParam("vel", 0, right_linear/wheel_radius_);
   right_wheel_joint_->SetParam("fmax", 0, 1.0);
   left_wheel_joint_->SetParam("vel", 0, left_linear/wheel_radius_);
   left_wheel_joint_->SetParam("fmax", 0, 1.0);
-  // std::cout << "GetParam: "<< right_wheel_joint_->GetParam("vel", 0) << std::endl;
 }
 
 GZ_REGISTER_MODEL_PLUGIN(GazeboDiffdriveController)

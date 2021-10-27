@@ -2,6 +2,10 @@
 // @author Rodrigo Jose Causarano Nunez (rcausaran@irobot.com)
 
 #include "balboa_controllers/pitch_controller.hpp"
+#include <tf2/convert.h>
+#include <tf2/LinearMath/Matrix3x3.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Vector3.h>
 
 namespace balboa_controllers
 {
@@ -33,8 +37,7 @@ PitchController::PitchController()
 }
 
 void PitchController::CmdVelCallback(){
-  std::cout << current_pitch_ << std::endl;
-  if(abs(current_pitch_) > 80){
+  if(abs(current_pitch_) > 90){
     cmd_vel_msg_.linear.x = 0.0;  // If more than 80 degrees, just stop.
   } else {
     double pid_correction = DoPid();
@@ -58,8 +61,20 @@ double PitchController::DoPid(){
 
 void PitchController::OnImuUpdate(sensor_msgs::msg::Imu::SharedPtr msg){
   std::lock_guard<std::mutex> lock{mutex_};
-  current_pitch_ = std::asin(2 * (msg->orientation.w*msg->orientation.y - msg->orientation.x*msg->orientation.z));
-  current_pitch_ *= 180 / M_PI;
+  tf2::Vector3 up{0.0, 0.0, 1.0};
+  tf2::Quaternion q{
+    msg->orientation.x,
+    msg->orientation.y,
+    msg->orientation.z,
+    msg->orientation.w};
+  tf2::Vector3 direction = tf2::quatRotate(q, up);
+  tf2::Matrix3x3 m{q};
+  double roll, yaw;
+  m.getRPY(roll, current_pitch_, yaw);
+  current_pitch_ *= 180 / M_PI;  // convert to degrees
+  if(tf2IsNegative(direction.z())){
+    current_pitch_ = copysign(1.0, current_pitch_) * (180 - abs(current_pitch_));
+  }
 }
 
 void PitchController::OnSetPitch(std_msgs::msg::Float64::SharedPtr msg){

@@ -11,7 +11,7 @@
   <xacro:property name="imu_z" value="${0.01*cm2m}" />
   <xacro:property name="wheel_radius" value="${1*cm2m}" />
   <xacro:property name="wheel_mass" value="0.5" />
-  <xacro:property name="wheel_z_offset" value="${0.5*cm2m}" />
+  <xacro:property name="wheel_z_offset" value="${0.0*cm2m}" />
   <xacro:property name="wheel_width" value="${0.1*cm2m}" />
   <xacro:property name="encoder_resolution" value="1440" />
   <xacro:property name="vel_update_rate" value="100" />
@@ -39,8 +39,8 @@
       </geometry>
     </collision>
     <xacro:inertial_cuboid_with_pose mass="1.0" x="${body_x}" y="${body_y}" z="${body_z}">
-      <origin xyz="${body_x/2} ${body_y/2} ${body_z/2}" />
-      <!-- <origin xyz="0 0 0" /> -->
+      <!-- <origin xyz="${body_x/2} ${body_y/2} ${body_z/2}" /> -->
+      <origin xyz="0 0 0" />
     </xacro:inertial_cuboid_with_pose>
   </link>
 
