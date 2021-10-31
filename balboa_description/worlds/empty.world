@@ -9,12 +9,7 @@
     </include>
 
     <physics name='default_physics' default='0' type='ode'>
-      <!-- <ode>
-        <solver>
-          <iters>10</iters>
-        </solver>
-      </ode> -->
-      <real_time_update_rate>100</real_time_update_rate>
+      <real_time_update_rate>1000</real_time_update_rate>
     </physics>
 
   </world>

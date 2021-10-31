@@ -1,5 +1,7 @@
 # @author Rodrigo Causarano (rjcausarano@gmail.com)
 
+import os
+
 from ament_index_python.packages import get_package_share_directory
 from launch.actions import ExecuteProcess
 from launch import LaunchDescription
@@ -17,6 +19,7 @@ def generate_launch_description():
         [pkg_balboa_description, 'urdf', 'balboa.urdf.xacro'])
     pitch_controller_params_yaml_file = PathJoinSubstitution(
         [pkg_balboa_controllers, 'config', 'pitch_controller.yaml'])
+    gazebo_params_file = os.path.join(pkg_balboa_description, 'config', 'gazebo_params.yaml')
     empty_world_file_name = PathJoinSubstitution(
         [pkg_balboa_description, 'worlds', 'empty.world'])
 
@@ -25,7 +28,8 @@ def generate_launch_description():
         cmd=['gzserver',
              '-s', 'libgazebo_ros_init.so',
              '-s', 'libgazebo_ros_factory.so',
-             empty_world_file_name],
+             empty_world_file_name,
+             'extra-gazebo-args', '--ros-args', '--params-file', gazebo_params_file],
         output='screen',
     )
 

@@ -14,12 +14,12 @@
   <xacro:property name="wheel_z_offset" value="${0.0*cm2m}" />
   <xacro:property name="wheel_width" value="${0.1*cm2m}" />
   <xacro:property name="encoder_resolution" value="1440" />
-  <xacro:property name="vel_update_rate" value="500" />
+  <xacro:property name="vel_update_rate" value="100" />
 
   <link name="origin_link" />
 
   <joint name="origin_joint" type="fixed">
-    <origin xyz="0 0 ${wheel_radius - wheel_z_offset}" rpy="0.0 ${10*deg2rad} 0.0"/>
+    <origin xyz="0 0 ${wheel_radius - wheel_z_offset}" rpy="0.0 ${5*deg2rad} 0.0"/>
     <parent link="origin_link"/>
     <child link="base_link"/>
   </joint>
