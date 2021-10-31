@@ -14,12 +14,12 @@
   <xacro:property name="wheel_z_offset" value="${0.0*cm2m}" />
   <xacro:property name="wheel_width" value="${0.1*cm2m}" />
   <xacro:property name="encoder_resolution" value="1440" />
-  <xacro:property name="vel_update_rate" value="10" />
+  <xacro:property name="vel_update_rate" value="500" />
 
   <link name="origin_link" />
 
   <joint name="origin_joint" type="fixed">
-    <origin xyz="0 0 ${wheel_radius - wheel_z_offset}" rpy="0 0 0"/>
+    <origin xyz="0 0 ${wheel_radius - wheel_z_offset}" rpy="0.0 ${10*deg2rad} 0.0"/>
     <parent link="origin_link"/>
     <child link="base_link"/>
   </joint>
@@ -27,19 +27,17 @@
   <!-- Create 3 base definition-->
   <link name="base_link">
     <visual>
-      <origin xyz="0 0 0" rpy="0 ${0*deg2rad} 0"/>
       <geometry>
         <mesh filename="file://$(find balboa_description)/meshes/body.stl" />
       </geometry>
     </visual>
     <collision name="balboa_collision">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
         <mesh filename="file://$(find balboa_description)/meshes/body.stl" />
       </geometry>
     </collision>
     <xacro:inertial_cuboid_with_pose mass="1.0" x="${body_x}" y="${body_y}" z="${body_z}">
-      <origin xyz="${body_x/2} ${body_y/2} ${body_z/2}" />
+      <origin xyz="0.0 0.0 ${body_z/2}" />
       <!-- <origin xyz="0 0 0" /> -->
     </xacro:inertial_cuboid_with_pose>
   </link>

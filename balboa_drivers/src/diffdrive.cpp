@@ -18,7 +18,6 @@ Diffdrive::Diffdrive()
 
 void Diffdrive::OnMsgReceived(geometry_msgs::msg::Twist::SharedPtr msg){
   (void)msg;
-  std::cout << "HELLO WORLD" << std::endl;
 }
 
 }  // namespace balboa_drivers
