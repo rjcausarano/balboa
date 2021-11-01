@@ -5,4 +5,4 @@ pitch_controller_node:
     Kd: 0.001
     Ki: 0.001
     publish_rate: 100.0
-    max_linear: 5.0
+    max_linear: 1.0

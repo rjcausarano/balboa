@@ -19,7 +19,7 @@
   <link name="origin_link" />
 
   <joint name="origin_joint" type="fixed">
-    <origin xyz="0 0 ${wheel_radius - wheel_z_offset}" rpy="0.0 ${5*deg2rad} 0.0"/>
+    <origin xyz="0 0 ${wheel_radius - wheel_z_offset}" rpy="0.0 0.0 0.0"/>
     <parent link="origin_link"/>
     <child link="base_link"/>
   </joint>
@@ -92,7 +92,7 @@
   </xacro:wheel>
 
   <!-- Ground truth pose -->
-  <gazebo>
+  <!-- <gazebo>
     <plugin name="gazebo_ros_p3d_robot" filename="libgazebo_ros_p3d.so">
       <ros>
         <namespace>/</namespace>
@@ -105,6 +105,6 @@
       <rpy_offset>0.0 0.0 0.0</rpy_offset>
       <gaussian_noise>0.0</gaussian_noise>
     </plugin>
-  </gazebo>
+  </gazebo> -->
 
 </robot>

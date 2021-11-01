@@ -16,10 +16,10 @@ PitchController::PitchController()
   Kd_ = declare_parameter("Kd").get<double>();
   Ki_ = declare_parameter("Ki").get<double>();
   max_linear_ = declare_parameter("max_linear").get<double>();
-  double cmd_vel_publish_rate = declare_parameter("publish_rate").get<double>();
+  double linear_vel_publish_rate = declare_parameter("publish_rate").get<double>();
 
-  cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>(
-    "cmd_vel", rclcpp::SystemDefaultsQoS());
+  linear_vel_pub_ = create_publisher<std_msgs::msg::Float64>(
+    "__linear", rclcpp::SystemDefaultsQoS());
 
   imu_sub_ = create_subscription<sensor_msgs::msg::Imu>(
     "imu/data", rclcpp::SystemDefaultsQoS(),
@@ -32,20 +32,20 @@ PitchController::PitchController()
   control_timer_ = create_timer(
     this,
     this->get_clock(),
-    std::chrono::duration<double>(1/cmd_vel_publish_rate),
-    std::bind(&PitchController::CmdVelCallback, this));
+    std::chrono::duration<double>(1/linear_vel_publish_rate),
+    std::bind(&PitchController::LinearVelCallback, this));
 }
 
-void PitchController::CmdVelCallback(){
+void PitchController::LinearVelCallback(){
   if(abs(current_pitch_) > 90){
-    cmd_vel_msg_.linear.x = 0.0;  // If more than 80 degrees, just stop.
+    linear_vel_msg_.data = 0.0;  // If more than 90 degrees, just stop.
   } else {
     double pid_correction = DoPid();
     if(pid_correction > max_linear_) pid_correction = max_linear_;
     else if(pid_correction < -max_linear_) pid_correction = -max_linear_;
-    cmd_vel_msg_.linear.x = pid_correction;
+    linear_vel_msg_.data = pid_correction;
   }
-  cmd_vel_pub_->publish(cmd_vel_msg_);
+  linear_vel_pub_->publish(linear_vel_msg_);
 }
 
 double PitchController::DoPid(){

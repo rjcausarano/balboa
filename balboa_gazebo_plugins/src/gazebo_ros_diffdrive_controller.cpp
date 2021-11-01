@@ -21,11 +21,15 @@ void GazeboDiffdriveController::Load(gazebo::physics::ModelPtr model, sdf::Eleme
 
   ros_node_ = gazebo_ros::Node::Get(sdf);
 
-  sub_ = ros_node_->create_subscription<geometry_msgs::msg::Twist>(
-    "/cmd_vel", rclcpp::SystemDefaultsQoS(),
-    std::bind(&GazeboDiffdriveController::OnMsgReceived, this, std::placeholders::_1));
+  linear_sub_ = ros_node_->create_subscription<std_msgs::msg::Float64>(
+    "__linear", rclcpp::SystemDefaultsQoS(),
+    std::bind(&GazeboDiffdriveController::OnLinearReceived, this, std::placeholders::_1));
 
-  cmd_vel_timer_ = rclcpp::create_timer(
+  angular_sub_ = ros_node_->create_subscription<std_msgs::msg::Float64>(
+    "__angular", rclcpp::SystemDefaultsQoS(),
+    std::bind(&GazeboDiffdriveController::OnAngularReceived, this, std::placeholders::_1));
+
+  vels_timer_ = rclcpp::create_timer(
     ros_node_,
     ros_node_->get_clock(),
     std::chrono::duration<double>(1/vel_update_rate),
@@ -35,10 +39,14 @@ void GazeboDiffdriveController::Load(gazebo::physics::ModelPtr model, sdf::Eleme
   right_wheel_joint_ = model->GetJoint("right_wheel_joint");
 }
 
-void GazeboDiffdriveController::OnMsgReceived(geometry_msgs::msg::Twist::SharedPtr msg){
-  std::lock_guard<std::mutex> lock{mutex_};
-  desired_linear_ = msg->linear.x;
-  desired_angular_ = msg->angular.z;
+void GazeboDiffdriveController::OnLinearReceived(std_msgs::msg::Float64::SharedPtr msg){
+  std::lock_guard<std::mutex> lock{linear_mutex_};
+  desired_linear_ = msg->data;
+}
+
+void GazeboDiffdriveController::OnAngularReceived(std_msgs::msg::Float64::SharedPtr msg){
+  std::lock_guard<std::mutex> lock{angular_mutex_};
+  desired_angular_ = msg->data;
 }
 
 void GazeboDiffdriveController::ApplyVelsCallback(){

@@ -7,7 +7,6 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 #include <std_msgs/msg/float64.hpp>
-#include <geometry_msgs/msg/twist.hpp>
 
 namespace balboa_controllers
 {
@@ -28,17 +27,17 @@ private:
   double error_sum_{0.0};
   double last_error_{0.0};
 
-  geometry_msgs::msg::Twist cmd_vel_msg_;
+  std_msgs::msg::Float64 linear_vel_msg_;
 
   rclcpp::TimerBase::SharedPtr control_timer_;
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr pitch_set_point_sub_;
-  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr linear_vel_pub_;
 
   // Mutex
   std::mutex mutex_;
   double DoPid();
-  void CmdVelCallback();
+  void LinearVelCallback();
   void OnImuUpdate(sensor_msgs::msg::Imu::SharedPtr msg);
   void OnSetPitch(std_msgs::msg::Float64::SharedPtr msg);
 };

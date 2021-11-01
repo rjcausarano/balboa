@@ -10,7 +10,7 @@
 #include <gazebo/physics/Joint.hh>
 #include <gazebo_ros/node.hpp>
 #include <gazebo/physics/World.hh>
-#include <geometry_msgs/msg/twist.hpp>
+#include <std_msgs/msg/float64.hpp>
 #include <balboa_gazebo_plugins/gazebo_ros_helpers.hpp>
 
 namespace balboa_gazebo_plugins
@@ -34,22 +34,25 @@ private:
   int encoder_resolution_{1};
 
   // Mutex to protect variables written from different threads
-  std::mutex mutex_;
+  std::mutex linear_mutex_;
+  std::mutex angular_mutex_;
 
-  rclcpp::TimerBase::SharedPtr cmd_vel_timer_;
+  rclcpp::TimerBase::SharedPtr vels_timer_;
 
   double desired_linear_{0.0};
   double desired_angular_{0.0};
 
   /// Node for ros communication
   gazebo_ros::Node::SharedPtr ros_node_{nullptr};
-  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr sub_{nullptr};
+  rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr linear_sub_{nullptr};
+  rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr angular_sub_{nullptr};
 
   gazebo::physics::JointPtr left_wheel_joint_{nullptr};
   gazebo::physics::JointPtr right_wheel_joint_{nullptr};
 
   void ApplyVelsCallback();
-  void OnMsgReceived(geometry_msgs::msg::Twist::SharedPtr msg);
+  void OnLinearReceived(std_msgs::msg::Float64::SharedPtr msg);
+  void OnAngularReceived(std_msgs::msg::Float64::SharedPtr msg);
 };
 
 }  // namespace balboa_gazebo_plugins
