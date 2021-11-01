@@ -1,0 +1,8 @@
+---
+velocity_controller_node:
+  ros__parameters:
+    Kp: 0.01
+    Kd: 0.0
+    Ki: 0.0
+    publish_rate: 10.0
+    max_angle: 15.0

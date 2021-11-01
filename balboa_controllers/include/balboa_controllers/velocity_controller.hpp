@@ -7,39 +7,39 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 #include <std_msgs/msg/float64.hpp>
+#include <geometry_msgs/msg/twist.hpp>
 
 namespace balboa_controllers
 {
-class PitchController : public rclcpp::Node{
+class VelocityController : public rclcpp::Node{
 public:
   /// \brief Constructor
-  PitchController();
+  VelocityController();
 
 private:
-  double desired_pitch_{0.0};  // in degrees
-  double current_pitch_{0.0}; // in degrees
-  double current_roll_{0.0};
+  double desired_linear_{0.0};
+  double desired_angular_{0.0};
 
   double Kp_{0.0};
   double Kd_{0.0};
   double Ki_{0.0};
-  double max_linear_{0.0};
+  double max_angle_{0.0};
   double error_sum_{0.0};
   double last_error_{0.0};
 
-  std_msgs::msg::Float64 linear_vel_msg_;
+  std_msgs::msg::Float64 pitch_msg_;
+  std_msgs::msg::Float64 angular_vel_msg_;
 
   rclcpp::TimerBase::SharedPtr control_timer_;
-  rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
-  rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr pitch_set_point_sub_;
-  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr linear_vel_pub_;
+  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr pitch_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr angular_vel_pub_;
 
   // Mutex
   std::mutex mutex_;
-  double DoPid();
-  void LinearVelCallback();
-  void OnImuUpdate(sensor_msgs::msg::Imu::SharedPtr msg);
-  void OnSetPitch(std_msgs::msg::Float64::SharedPtr msg);
+  void LinearVelUpdate();
+  void AngularVelUpdate();
+  void CmdVelCallback(geometry_msgs::msg::Twist::SharedPtr msg);
 };
 
 }  // namespace balboa_controllers

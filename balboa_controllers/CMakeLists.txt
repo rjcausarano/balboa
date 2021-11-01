@@ -40,8 +40,20 @@ ament_target_dependencies(pitch_controller_lib
   ${dependencies}
 )
 
+add_library(velocity_controller_lib SHARED)
+target_sources(
+  velocity_controller_lib
+  PRIVATE
+    src/velocity_controller.cpp
+)
+target_include_directories(velocity_controller_lib PUBLIC include)
+ament_target_dependencies(velocity_controller_lib
+  ${dependencies}
+)
+
 set(libraries_names
   pitch_controller_lib
+  velocity_controller_lib
 )
 
 #### Executables
@@ -55,8 +67,18 @@ target_sources(
 )
 target_link_libraries(pitch_controller_node pitch_controller_lib)
 
+# Velocity controller
+add_executable(velocity_controller_node)
+target_sources(
+  velocity_controller_node
+  PRIVATE
+    src/velocity_controller_node.cpp
+)
+target_link_libraries(velocity_controller_node velocity_controller_lib)
+
 set(executables_names
   pitch_controller_node
+  velocity_controller_node
 )
 
 #### Install

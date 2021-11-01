@@ -19,6 +19,8 @@ def generate_launch_description():
         [pkg_balboa_description, 'urdf', 'balboa.urdf.xacro'])
     pitch_controller_params_yaml_file = PathJoinSubstitution(
         [pkg_balboa_controllers, 'config', 'pitch_controller.yaml'])
+    velocity_controller_params_yaml_file = PathJoinSubstitution(
+        [pkg_balboa_controllers, 'config', 'velocity_controller.yaml'])
     gazebo_params_file = os.path.join(pkg_balboa_description, 'config', 'gazebo_params.yaml')
     empty_world_file_name = PathJoinSubstitution(
         [pkg_balboa_description, 'worlds', 'empty.world'])
@@ -59,6 +61,15 @@ def generate_launch_description():
                     {'use_sim_time': True}],
     )
 
+    velocity_controller = Node(
+        package='balboa_controllers',
+        executable='velocity_controller_node',
+        name='velocity_controller_node',
+        output='screen',
+        parameters=[velocity_controller_params_yaml_file,
+                    {'use_sim_time': True}],
+    )
+
     spawn_model = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
@@ -82,5 +93,6 @@ def generate_launch_description():
     ld.add_action(state_publisher)
     ld.add_action(spawn_model)
     ld.add_action(pitch_controller)
+    ld.add_action(velocity_controller)
 
     return ld
