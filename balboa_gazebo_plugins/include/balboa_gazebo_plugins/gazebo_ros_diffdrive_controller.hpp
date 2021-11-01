@@ -11,6 +11,7 @@
 #include <gazebo_ros/node.hpp>
 #include <gazebo/physics/World.hh>
 #include <std_msgs/msg/float64.hpp>
+#include <sensor_msgs/msg/joint_state.hpp>
 #include <balboa_gazebo_plugins/gazebo_ros_helpers.hpp>
 
 namespace balboa_gazebo_plugins
@@ -44,8 +45,11 @@ private:
 
   /// Node for ros communication
   gazebo_ros::Node::SharedPtr ros_node_{nullptr};
+  sensor_msgs::msg::JointState joint_state_msg_;
+
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr linear_sub_{nullptr};
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr angular_sub_{nullptr};
+  rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_pub_{nullptr};
 
   gazebo::physics::JointPtr left_wheel_joint_{nullptr};
   gazebo::physics::JointPtr right_wheel_joint_{nullptr};

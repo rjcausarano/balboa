@@ -6,3 +6,4 @@ velocity_controller_node:
     Ki: 0.0
     publish_rate: 10.0
     max_angle: 15.0
+    wheel_radius: 0.01
